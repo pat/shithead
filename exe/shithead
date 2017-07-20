@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+require "shithead"
+
+players = ARGV.collect { |name| Shithead::Player.new name }
+
+deck     = Shithead::Deck.new players.length
+stack    = Shithead::Stack.new
+discards = Shithead::Stack.new
+
+Shithead::Dealer.new(deck, players).call
+
+begin
+  loop do
+    puts "Status:"
+    puts "  in deck:     #{deck.card_count}"
+    puts "  in stack:    #{stack.size}"
+    puts "  in discards: #{discards.size}"
+    puts ""
+
+    players.each do |player|
+      puts "#{player.name}:"
+      puts "  in hand: #{player.hand.size} (#{player.hand.to_s})"
+      puts "  visible: #{player.visible.to_s}"
+      puts "  hidden: #{player.hidden_count}"
+      puts ""
+
+      puts "Top: #{stack.to_s}"
+      puts ""
+
+      Shithead::Turn.call deck, stack, discards, player
+    end
+
+    sleep 2
+    puts "\e[H\e[2J"
+  end
+rescue Shithead::GameOverError => error
+  puts error.message
+end
