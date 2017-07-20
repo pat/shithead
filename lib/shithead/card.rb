@@ -33,6 +33,6 @@ class Shithead::Card
   end
 
   def to_s
-    "#{SUITES[suite]}#{value}"
+    "#{value}#{SUITES[suite]}"
   end
 end
